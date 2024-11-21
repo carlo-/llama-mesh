@@ -80,16 +80,10 @@ struct ContentView: View {
                     Text("Temperature")
                     TextField("Temperature", value: $temperature, format: .number)
                 }
-                .onChange(of: temperature) { _, newValue in
-                    temperature = min(1, max(0, newValue))
-                }
                 Divider()
                 HStack {
                     Text("Max Tokens")
                     TextField("Max Tokens", value: $maxTokens, format: .number)
-                }
-                .onChange(of: maxTokens) { _, newValue in
-                    maxTokens = min(8192, max(128, newValue))
                 }
             }
             .disabled(isGenerating)
@@ -252,8 +246,12 @@ struct ContentView: View {
         }
         isGenerating = true
         
-        let maxTokens = maxTokens
-        let temperature = temperature
+        let maxTokens = min(8192, max(128, maxTokens))
+        self.maxTokens = maxTokens
+        
+        let temperature = min(1, max(0, temperature))
+        self.temperature = temperature
+        
         let seed = seed
         
         if case .begin(let systemPrompt) = prompt {
